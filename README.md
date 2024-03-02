@@ -5,7 +5,7 @@ Example usage:
 
 `using OSRS.Dotnet.Tools`
 
-`latestPrices = await Prices.GetLatestMappedPricesAsync("<YourDiscordName>"); // Latest prices mapped to Item object
-fiveMinPrices = await Prices.GetFiveMinMappedPricesAsync("<YourDiscordName>"); // Past 5min prices mapped to Item object
-oneHrPrices = await Prices.GetOneHrMappedPricesAsync("<YourDiscordName>"); // Past 1hr prices mapped to Item object
-itemDefinitions = await Prices.GetItemMappingsAsync("<YourDiscordName>"); // Get all item mappings`
+`var latestPrices = await Prices.GetLatestMappedPricesAsync("<YourDiscordName>"); // Latest prices mapped to Item object`
+`var fiveMinPrices = await Prices.GetFiveMinMappedPricesAsync("<YourDiscordName>"); // Past 5min prices mapped to Item object`
+`var oneHrPrices = await Prices.GetOneHrMappedPricesAsync("<YourDiscordName>"); // Past 1hr prices mapped to Item object`
+`var itemDefinitions = await Prices.GetItemMappingsAsync("<YourDiscordName>"); // Get all item mappings`
