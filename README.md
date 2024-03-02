@@ -1,7 +1,7 @@
 # OSRS.Dotnet.Tools
 A library of tools for interacting with the game Oldschool Runescape's (OSRS) API's using .NET
 
-Example usage:
+
 `using OSRS.Dotnet.Tools`
 
 `await Prices.GetLatestMappedPricesAsync("<YourDiscordName>"); // Latest prices mapped to Item object`
