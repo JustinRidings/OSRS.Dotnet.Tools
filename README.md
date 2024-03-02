@@ -4,7 +4,6 @@ A library of tools for interacting with the game Oldschool Runescape's (OSRS) AP
 Example usage:
 
 `using OSRS.Dotnet.Tools`
-
 `var latestPrices = await Prices.GetLatestMappedPricesAsync("<YourDiscordName>"); // Latest prices mapped to Item object`
 `var fiveMinPrices = await Prices.GetFiveMinMappedPricesAsync("<YourDiscordName>"); // Past 5min prices mapped to Item object`
 `var oneHrPrices = await Prices.GetOneHrMappedPricesAsync("<YourDiscordName>"); // Past 1hr prices mapped to Item object`
