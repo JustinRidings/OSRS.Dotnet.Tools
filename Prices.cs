@@ -212,11 +212,11 @@ namespace OSRS.Dotnet.Tools
                 row["ItemId"] = item.Item?.Id;
                 row["BuyLimit"] = item.Item?.Limit ?? 0;
                 row["High"] = item.LatestPrice?.High ?? 0;
-                row["HighTimeUTC"] = item.LatestPrice?.HighTime ?? 0;
+                row["HighTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.HighTime);
                 row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
                 row["CurrentAvgTimeUTC"] = DateTime.UtcNow;
                 row["Low"] = item.LatestPrice?.Low ?? 0;
-                row["LowTimeUTC"] = item.LatestPrice?.LowTime ?? 0;
+                row["LowTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.LowTime);
 
                 dt.Rows.Add(row);
             }
@@ -251,11 +251,11 @@ namespace OSRS.Dotnet.Tools
             }
         }
 
-        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        public static DateTime UnixTimeStampToDateTime(long? unixTimeStamp)
         {
             // Unix timestamp is seconds past epoch
             DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
-            dateTime = dateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
+            dateTime = dateTime.AddSeconds(unixTimeStamp ?? 0).ToUniversalTime();
             return dateTime;
         }
     }
