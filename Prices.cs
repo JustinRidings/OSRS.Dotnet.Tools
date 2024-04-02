@@ -197,11 +197,12 @@ namespace OSRS.Dotnet.Tools
             dt.Columns.Add("ItemName", typeof(string));
             dt.Columns.Add("ItemId", typeof(string));
             dt.Columns.Add("BuyLimit", typeof(long));
-            dt.Columns.Add("High", typeof(string));
-            dt.Columns.Add("HighTime", typeof(string));
+            dt.Columns.Add("High", typeof(long));
+            dt.Columns.Add("HighTimeUTC", typeof(DateTime));
             dt.Columns.Add("Average", typeof(long));
-            dt.Columns.Add("Low", typeof(string));
-            dt.Columns.Add("LowTime", typeof(string));
+            dt.Columns.Add("CurrentAvgTimeUTC", typeof(DateTime));
+            dt.Columns.Add("Low", typeof(long));
+            dt.Columns.Add("LowTimeUTC", typeof(DateTime));
 
             foreach (var item in latestPrices)
             {
@@ -211,10 +212,11 @@ namespace OSRS.Dotnet.Tools
                 row["ItemId"] = item.Item?.Id;
                 row["BuyLimit"] = item.Item?.Limit ?? 0;
                 row["High"] = item.LatestPrice?.High ?? 0;
-                row["HighTime"] = item.LatestPrice?.HighTime ?? 0;
+                row["HighTimeUTC"] = item.LatestPrice?.HighTime ?? 0;
                 row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
+                row["CurrentAvgTimeUTC"] = DateTime.UtcNow;
                 row["Low"] = item.LatestPrice?.Low ?? 0;
-                row["LowTime"] = item.LatestPrice?.LowTime ?? 0;
+                row["LowTimeUTC"] = item.LatestPrice?.LowTime ?? 0;
 
                 dt.Rows.Add(row);
             }
@@ -247,6 +249,14 @@ namespace OSRS.Dotnet.Tools
             {
                 return false;
             }
+        }
+
+        public static DateTime UnixTimeStampToDateTime(double unixTimeStamp)
+        {
+            // Unix timestamp is seconds past epoch
+            DateTime dateTime = new DateTime(1970, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc);
+            dateTime = dateTime.AddSeconds(unixTimeStamp).ToUniversalTime();
+            return dateTime;
         }
     }
 }
