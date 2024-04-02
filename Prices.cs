@@ -1,7 +1,9 @@
 ﻿using Newtonsoft.Json;
 using OSRS.Dotnet.Tools.Types;
 using System.Collections.Concurrent;
+using System.Data;
 using System.Net;
+using System.Text;
 
 namespace OSRS.Dotnet.Tools
 {
@@ -186,6 +188,65 @@ namespace OSRS.Dotnet.Tools
             return DateTimeOffset.FromUnixTimeSeconds(normalizedStamp).DateTime;
         }
 
+        public static async Task<bool> CreateCsvFromLatestPricesAsync(string discordUsername, string outputFilePath)
+        {
+            SetUserAgent(discordUsername);
+            var latestPrices = await GetLatestMappedPricesAsync(discordUsername);
 
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ItemName", typeof(string));
+            dt.Columns.Add("ItemId", typeof(string));
+            dt.Columns.Add("BuyLimit", typeof(long));
+            dt.Columns.Add("High", typeof(string));
+            dt.Columns.Add("HighTime", typeof(string));
+            dt.Columns.Add("Average", typeof(long));
+            dt.Columns.Add("Low", typeof(string));
+            dt.Columns.Add("LowTime", typeof(string));
+
+            foreach (var item in latestPrices)
+            {
+                DataRow row = dt.NewRow();
+
+                row["ItemName"] = item.Item?.Name;
+                row["ItemId"] = item.Item?.Id;
+                row["BuyLimit"] = item.Item?.Limit ?? 0;
+                row["High"] = item.LatestPrice?.High ?? 0;
+                row["HighTime"] = item.LatestPrice?.HighTime ?? 0;
+                row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
+                row["Low"] = item.LatestPrice?.Low ?? 0;
+                row["LowTime"] = item.LatestPrice?.LowTime ?? 0;
+
+                dt.Rows.Add(row);
+            }
+
+            return TryConvertDataTableToCsv(dt, outputFilePath);
+        }
+
+        public static bool TryConvertDataTableToCsv(DataTable table, string filePath)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            // Write column headers
+            string[] columnNames = table.Columns.Cast<DataColumn>().Select(col => col.ColumnName).ToArray();
+            sb.AppendLine(string.Join(",", columnNames));
+
+            // Write data rows
+            foreach (DataRow row in table.Rows)
+            {
+                string?[] fields = row.ItemArray.Select(field => field?.ToString()).ToArray();
+                sb.AppendLine(string.Join(",", fields));
+            }
+
+            try
+            {
+                // Save to CSV file
+                File.WriteAllText(filePath, sb.ToString());
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }
