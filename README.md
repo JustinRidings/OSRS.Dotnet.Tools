@@ -14,6 +14,9 @@ await Prices.GetOneHrMappedPricesAsync("<YourDiscordName>"); // Past 1hr prices 
 
 await Prices.GetItemMappingsAsync("<YourDiscordName>"); // Get all item mappings
 
-bool isSuccess =  await Prices.CreateCsvFromLatestPricesAsync("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv"); // Create a CSV from the latest mapped prices.
+// Create a CSV from the latest mapped prices.
+bool isCreateSuccess =  await Prices.CreateCsvFromLatestPricesAsync("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv"); 
 
+// Append to CSV with latest mapped prices.
+bool isAppendSuccess =  await Prices.AppendLatestPricesToCsv("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv");
 ```
