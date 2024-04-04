@@ -35,7 +35,7 @@ namespace OSRS.Dotnet.Tools
 
             using (var response = await _httpClient.GetAsync(_mappingEndpoint))
             {
-                if(response != null && response.IsSuccessStatusCode)
+                if (response != null && response.IsSuccessStatusCode)
                 {
                     var items = JsonConvert.DeserializeObject<List<Item>>(await response.Content.ReadAsStringAsync());
                     results = items ?? new List<Item>();
@@ -158,7 +158,7 @@ namespace OSRS.Dotnet.Tools
             var itemMappings = await GetItemMappingsAsync(discordUsername);
             var latestPrices = await GetLatestPricesAsync(discordUsername);
             ConcurrentBag<LatestMappedPrice> latestMappedPrices = new ConcurrentBag<LatestMappedPrice>();
-            
+
             if (latestPrices.Data != null)
             {
                 Parallel.ForEach(latestPrices.Data, p =>
@@ -188,6 +188,45 @@ namespace OSRS.Dotnet.Tools
             return DateTimeOffset.FromUnixTimeSeconds(normalizedStamp).DateTime;
         }
 
+        public static async Task<bool> AppendLatestPricesToCsv(string discordUsername, string csvFilePath)
+        {
+            SetUserAgent(discordUsername);
+            var latestPrices = await GetLatestMappedPricesAsync(discordUsername);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("ItemName", typeof(string));
+            dt.Columns.Add("ItemId", typeof(string));
+            dt.Columns.Add("BuyLimit", typeof(long));
+            dt.Columns.Add("High", typeof(long));
+            dt.Columns.Add("HighTimeUTC", typeof(DateTime));
+            dt.Columns.Add("Average", typeof(long));
+            dt.Columns.Add("CurrentAvgTimeUTC", typeof(DateTime));
+            dt.Columns.Add("Low", typeof(long));
+            dt.Columns.Add("LowTimeUTC", typeof(DateTime));
+
+            foreach (var item in latestPrices)
+            {
+                if (item != null && item.Item != null && item.Item.Name != null)
+                {
+                    DataRow row = dt.NewRow();
+
+                    row["ItemName"] = item.Item?.Name;
+                    row["ItemId"] = item.Item?.Id;
+                    row["BuyLimit"] = item.Item?.Limit ?? 0;
+                    row["High"] = item.LatestPrice?.High ?? 0;
+                    row["HighTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.HighTime);
+                    row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
+                    row["CurrentAvgTimeUTC"] = DateTime.UtcNow;
+                    row["Low"] = item.LatestPrice?.Low ?? 0;
+                    row["LowTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.LowTime);
+
+                    dt.Rows.Add(row);
+                }
+            }
+
+            return TryAppendDataTableToCsv(dt, csvFilePath);
+        }
+
         public static async Task<bool> CreateCsvFromLatestPricesAsync(string discordUsername, string outputFilePath)
         {
             SetUserAgent(discordUsername);
@@ -206,25 +245,50 @@ namespace OSRS.Dotnet.Tools
 
             foreach (var item in latestPrices)
             {
-                DataRow row = dt.NewRow();
+                if (item != null && item.Item != null && item.Item.Name != null)
+                {
+                    DataRow row = dt.NewRow();
 
-                row["ItemName"] = item.Item?.Name;
-                row["ItemId"] = item.Item?.Id;
-                row["BuyLimit"] = item.Item?.Limit ?? 0;
-                row["High"] = item.LatestPrice?.High ?? 0;
-                row["HighTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.HighTime);
-                row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
-                row["CurrentAvgTimeUTC"] = DateTime.UtcNow;
-                row["Low"] = item.LatestPrice?.Low ?? 0;
-                row["LowTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.LowTime);
+                    row["ItemName"] = item.Item?.Name;
+                    row["ItemId"] = item.Item?.Id;
+                    row["BuyLimit"] = item.Item?.Limit ?? 0;
+                    row["High"] = item.LatestPrice?.High ?? 0;
+                    row["HighTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.HighTime);
+                    row["Average"] = ((item.LatestPrice?.High + item.LatestPrice?.Low) / 2) ?? 0;
+                    row["CurrentAvgTimeUTC"] = DateTime.UtcNow;
+                    row["Low"] = item.LatestPrice?.Low ?? 0;
+                    row["LowTimeUTC"] = UnixTimeStampToDateTime(item.LatestPrice?.LowTime);
 
-                dt.Rows.Add(row);
+                    dt.Rows.Add(row);
+                }
             }
 
             return TryConvertDataTableToCsv(dt, outputFilePath);
         }
 
-        public static bool TryConvertDataTableToCsv(DataTable table, string filePath)
+        private static bool TryAppendDataTableToCsv(DataTable table, string filePath)
+        {
+            List<string> sb = new List<string>();
+
+            // Write data rows
+            foreach (DataRow row in table.Rows)
+            {
+                string?[] fields = row.ItemArray.Select(field => field?.ToString()).ToArray();
+                sb.Add(string.Join(",", fields));
+            }
+            try
+            {
+                File.AppendAllLinesAsync(filePath, sb.AsEnumerable());
+
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+
+        private static bool TryConvertDataTableToCsv(DataTable table, string filePath)
         {
             StringBuilder sb = new StringBuilder();
 
