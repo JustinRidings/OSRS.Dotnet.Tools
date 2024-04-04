@@ -174,8 +174,6 @@ namespace OSRS.Dotnet.Tools
             return latestMappedPrices.ToList();
         }
 
-
-
         private static void SetUserAgent(string discordUsername)
         {
             string userAgent = $"volume_tracker - discord/{discordUsername}";

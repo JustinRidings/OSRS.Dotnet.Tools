@@ -7,7 +7,10 @@
     <OutputType>Library</OutputType>
     <Title>OSRS.Dotnet.Tools</Title>
     <Authors>JustinRidings</Authors>
-    <Version>1.0.2</Version>
+    <Version>1.0.3</Version>
+    <Description>A library of tools for interacting with the game Oldschool Runescape's (OSRS) API's using .NET</Description>
+    <RepositoryUrl>https://github.com/JustinRidings/OSRS.Dotnet.Tools</RepositoryUrl>
+    <PackageTags>OSRS;Oldschool Runescape;Runescape</PackageTags>
   </PropertyGroup>
 
   <ItemGroup>
