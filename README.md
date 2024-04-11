@@ -27,7 +27,6 @@ bool isCreateSuccess =  await Prices.CreateCsvFromLatestPricesAsync("<YourDiscor
 bool isAppendSuccess =  await Prices.AppendLatestPricesToCsv("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv");
 
 #endregion
-
 #region Hiscores
 
 // Get a normal account's highscores
