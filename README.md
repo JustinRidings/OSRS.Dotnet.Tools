@@ -25,6 +25,7 @@ bool isCreateSuccess =  await Prices.CreateCsvFromLatestPricesAsync("<YourDiscor
 
 // Append to CSV with latest mapped prices.
 bool isAppendSuccess =  await Prices.AppendLatestPricesToCsv("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv");
+
 #endregion
 
 #region Hiscores
