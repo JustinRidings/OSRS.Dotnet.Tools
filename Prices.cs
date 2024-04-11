@@ -2,7 +2,6 @@
 using OSRS.Dotnet.Tools.Types;
 using System.Collections.Concurrent;
 using System.Data;
-using System.Net;
 using System.Text;
 
 namespace OSRS.Dotnet.Tools
