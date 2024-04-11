@@ -5,7 +5,8 @@ A library of tools for interacting with the game Oldschool Runescape's (OSRS) AP
 
 ```
 using OSRS.Dotnet.Tools
--------------------------Prices-------------------------
+
+#region PriceExamples
 await Prices.GetLatestMappedPricesAsync("<YourDiscordName>"); // Latest prices mapped to Item object
 
 await Prices.GetFiveMinMappedPricesAsync("<YourDiscordName>"); // Past 5min prices mapped to Item object
@@ -19,12 +20,14 @@ bool isCreateSuccess =  await Prices.CreateCsvFromLatestPricesAsync("<YourDiscor
 
 // Append to CSV with latest mapped prices.
 bool isAppendSuccess =  await Prices.AppendLatestPricesToCsv("<YourDiscordName>", @"C:\Users\foo\Desktop\LatestPrices.csv");
+#endregion
 
--------------------------Hiscores-------------------------
+#region Hiscores
 // Get a normal account's highscores
 await Hiscores.GetHiscoreAsync(null, "Zezima"); 
 
 // Get an Ironman's highscores
 await Hiscores.GetHiscoreAsync(PlayerType.Ironman, "Iron Hyger");
 
+#endregion
 ```
