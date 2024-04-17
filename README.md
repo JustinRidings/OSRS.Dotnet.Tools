@@ -4,7 +4,7 @@ A library of tools for interacting with the game Oldschool Runescape's (OSRS) AP
 [Install Public Package From NuGet.org](https://www.nuget.org/packages/OSRS.Dotnet.Tools)
 
 ```
-using OSRS.Dotnet.Tools
+using OSRS.Dotnet.Tools;
 
 #region PriceExamples
 
